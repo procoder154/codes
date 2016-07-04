@@ -267,9 +267,39 @@ int insert(Node **head)
 	return SUCCESS;
 
 }
+int deleteNodeByPosition(Node **head, int position)
+{
+	node *iterator=*head,*temp;
+	int i=1;
+	if(!*head)
+	{
+		printf("\nThe linked list is empty!! Cannot perform deletion!");
+		return FAILURE;
+	}
+	if (position==0)
+	{
+		temp=iterator;
+		*head=*head->next;
+		iterator=*head;
+		free(temp);
+	}	
+	else
+	{
+		while(i<length)
+		{
+			i++;
+			iterator=iterator->next;
+		}
+		temp=iterator->next;
+		iterator->next=temp->next;
+		free(temp);
+	}
+	printf("\nSuccessfully deleted node!!!");
+	return SUCCESS;
+}
 int main(int argc, char const *argv[])
 {
-	int choice=0,status,number,position,length;
+	int choice=0,status,number,position,length,choice;
 	Node **head,*iterator;
 	initialize(head);
 	while(choice!=8)
@@ -308,7 +338,35 @@ int main(int argc, char const *argv[])
 						printf("\nThe linked list is empty!!!!");
 
 					break;
-			case 5:
+			case 5: printf("\nLinked List Deletion\n1.Delete by position\n2.Delete from beginning\n3.Delete from end\n4.Delete by element\n\nChoice - ");
+					choice=readInteger();
+					length=linkedListLength();
+					if (choice==1)
+					{
+						printf("\nEnter the position of the element which needs to be deleted : ");
+						position=readInteger();
+						if (position>=0 && position<length)
+						{
+							status=deleteNodeByPosition(head,position);
+						}
+
+					}
+					else if (choice==2)
+					{
+						status=deleteNodeByPosition(head,0);
+					}
+					else if(choice==3)
+					{
+						status=deleteNodeByPosition(head,length-1);
+					}
+					else if(choice==4)
+					{
+
+					}
+					else
+					{
+						printf("\nInvalid Entry!!!");
+					}
 					break;
 			case 6:	length = linkedListLength(*head);
 					if (length!=0)
