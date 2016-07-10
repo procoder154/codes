@@ -8,6 +8,45 @@ typedef struct Node
 	int data;
 	struct Node *next;
 }Node;
+typedef struct Stack
+{
+	Node *head;
+	struct Stack *next;
+		
+}Stack;
+void stack_initialize(Stack **top)
+{
+	*top=NULL;
+}
+int push(Stack **top, Node *head)
+{
+	Stack *firstNode;
+	firstNode=malloc(sizeof(Stack));
+	firstNode->head=head;
+	firstNode->next=*top;
+	*top=firstNode;
+	return SUCCESS;
+}
+Node *pop(Stack **top)
+{
+	Node *popNode;
+	if (!*top)
+	{
+		printf("\nThe stack is empty!! Cannot perform pop operation!!");
+		return NULL;
+	}
+	popNode=(*top)->head;
+	(*top)=(*top)->next;
+	return popNode;
+
+}
+int isEmpty(Stack **top)
+{
+	if (*top)
+		return FAILURE;
+	else
+		return SUCCESS;
+}
 int readInteger()
 {
 	int num;
@@ -18,7 +57,6 @@ int readInteger()
 }
 void initialize(Node **head)
 {
-	head=malloc(sizeof(Node));
 	*head=NULL;
 }
 Node *createNode(int data)
@@ -27,7 +65,7 @@ Node *createNode(int data)
 	head->data=data;
 	head->next=NULL;
 	return head;
-}
+};
 int createList(Node **head)
 {
 	int number,element;
@@ -294,15 +332,108 @@ int deleteNodeByPosition(Node **head, int position)
 		iterator->next=temp->next;
 		free(temp);
 	}
+	else
+		return FAILURE;
 	printf("\nSuccessfully deleted node!!!");
 	return SUCCESS;
+}
+Node* printLinkedListReverseByStack(Node *head)
+{
+	Stack **top;
+	Node *popNode;
+	top=malloc(sizeof(Node**));
+	stack_initialize(top);
+
+	if (!head)
+	{
+		printf("\nThe linked list is empty!!!");
+		return NULL;
+	}
+	while(head!=NULL)
+	{
+		push(top,head);
+		head=head->next;
+	}
+	printf("\nThe reversed linked list contains : ");
+	while(isEmpty(top)!=SUCCESS)
+	{
+		popNode=pop(top);
+		if (popNode!=NULL)
+			printf("%d",popNode->data);
+		if (isEmpty(top)!=SUCCESS)
+			printf(" -- >");	
+	}
+	return NULL;
+
+}
+void reverseLinkedList(Node **head)
+{
+	Node *previous,*current,*next;
+	if (*head==NULL)
+	{
+		printf("\nThe linked list is empty!!!");
+		return;
+	}
+	previous=NULL;
+	current=*head;
+	next=current->next;
+
+	while(current)
+	{
+		next=current->next;
+		current->next=previous;
+		previous=current;
+		current=next;
+
+	}
+	printf("The reversed linked list : ");
+	displayList(previous);
+
+	*head=previous;
+}
+void LinkedListReverseByStack(Node **head)
+{
+	Node *iterator,*popNode,*firstNode;
+	Stack **top;
+	top=malloc(sizeof(Node**));
+	stack_initialize(top);
+	iterator=*head;
+	printf("\nThe original list contains : ");
+	displayList(iterator);
+	if(!iterator)
+	{
+		printf("\nThe linked list is empty!!!");
+		return ;
+	}
+	while(iterator)
+	{
+		push(top,iterator);
+		iterator=iterator->next;
+	}
+	firstNode=NULL;
+	while(isEmpty(top)!=SUCCESS)
+	{
+		popNode=pop(top);
+		popNode->next=NULL;
+		if (!firstNode)
+			firstNode=popNode;
+		else
+		{
+			iterator=firstNode;
+			while(iterator->next)
+				iterator=iterator->next;
+			iterator->next=popNode;
+		}
+	}
+	*head=firstNode;
 }
 int main(int argc, char const *argv[])
 {
 	int choice=0,status,number,position,length;
 	Node **head,*iterator;
+	head=malloc(sizeof(Node));
 	initialize(head);
-	while(choice!=8)
+	while(choice!=9)
 	{
 		char *displayText="\tLinked List Operations\n1.Create a linked list\n2.Display the linked list\n3.Insert into linked list\n4.Search into linked list\n5.Delete from linked list\n6.Length of the linked list\n7.Print reversed linked list\n8.Reverse the linked list\n9.Exit\n\nEnter your choice - ";	
 		printf("\n%s",displayText);
@@ -383,9 +514,20 @@ int main(int argc, char const *argv[])
 					else
 						printf("\nThe linked list is empty!!!");
 					break;
-			case 7:
+			case 7: printLinkedListReverseByStack(*head);
 					break;
-			case 8:
+			case 8: printf("\nEnter the option\n1.By Using Stack\n2.By switching the pointers\n\nChoice : ");
+					choice=readInteger();
+					if(choice==1)
+						LinkedListReverseByStack(head);
+					else if (choice==2)
+						reverseLinkedList(head);
+					else
+					{
+						printf("\nInvalid Selection!!!");
+						return 0;
+					}
+					printf("\nLinked List Reversed!!");
 					break;
 			case 9:
 					exit(0);
